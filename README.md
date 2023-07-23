@@ -82,4 +82,23 @@ So here is the idea:
 
 3. When central server receives this information it creates a record in some mapping table (could be simple JS object, or some kind of database), saying that **fingerpint**=**ip_address**. For example our **fingerpint** = "OSOoNio3i48j83ijI" and Raspberry PI local ip address = "192.168.1.102", then server will record mappingTable['OSOoNio3i48j83ijI'] = '192.168.1.102';
 
-4. Browser asks central server to give him list of all collected ip addresses for his **fingerprint**. Having this list browser now can establish direct connection to the webserver. 
+4. Browser asks central server to give him list of all collected ip addresses for his **fingerprint**. Having this list browser now can establish direct connection to the webserver.
+
+Check source code to get more understanding.
+
+## Browser support
+
+- Firefox on Linux
+- MS Edge on Linux
+- Opera on Linux
+- Chrome on Linux
+- Edge on Windows 7
+- Opera on Windows 7
+- Chrome on Windows 7
+- Chrome for Android
+- Firefox for Android
+
+So I checked several different web browsers and it works almost everywhere, with some exceptions:
+
+1. Couldn't get it working under Firefox for windows (I believe that it's some kind of bug there, because it doesn't work with any ".local" suffixed hostnames).
+2. Some of the browsers are too picky about the way you ping this random hostname (that's why I added Date.now() there and that's why I request it using several methods)
