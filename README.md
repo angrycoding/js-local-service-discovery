@@ -39,4 +39,47 @@ This will work, but will take ages...
 Let's get use of MDNS: https://en.wikipedia.org/wiki/Multicast_DNS
 MDNS is basically the same thing as regular DNS (and works pretty similar), with one exception (at least that's what I'm aware of): it's used to resolve hostnames with ".local" suffix. So all requests made to "foobar.local" or "blabla.local" will be attempted to be resolved against MDNS service running in the local network. There is well known thing called Avahi: https://wiki.archlinux.org/title/avahi that is used by Raspbian so you can find your Rpi by "raspberrypi.local" instead of looking up it's ip on your router or scanning network.
 
-MDNS service is running on UDP port 5353 and since it's UDP you're free to run several instances of MDNS servers bound to the same 5354 UDP port.
+MDNS service is running on UDP port 5353 and since it's UDP you're free to run several instances of MDNS servers bound to the same 5353 UDP port.
+
+So in order to listen traffic originated to MDNS server we need to create simple UDP server on our Raspberry PI (or esp8266) and bind it to 5353:
+
+```javascript
+const dgram = require('dgram');
+
+const socket = dgram.createSocket({
+	type: 'udp4',
+	reuseAddr: true
+});
+
+socket.on('listening', function () {
+	const address = socket.address();
+	console.log('UDP socket listening on ' + address.address + ":" + address.port);
+});
+
+socket.on('message', (data, sender) => {
+  console.info(data.toString(), sender);
+});
+
+socket.bind('5353', '0.0.0.0');
+```
+
+Try to run it and you'll see MDNS requests made by devices in your local network (for my home setup I see a lot of traffic produced by chromecast). You can also try to open your favorite web browser, type "blabla.local" and pretty soon you'll see MDNS request made by the web browser with "blabla.local" hostname.
+
+Pretty cool thing here is that by running such server in our local network:
+
+1. We are not interrupting existing MDNS servers (we just listen traffic and never attempt to respond)
+2. We can see what hostname is requested along with the local ip address of the requester.
+
+So how does it all help us to communicate with Raspberry PI webserver from web application running on different device in the same network?
+
+## Central server
+
+So here is the idea:
+
+1. Browser initiates "scan" process by sending request to specially formed ".local" suffixed hostname. This hostname can include some information about sender (like user id, or cookie, or whatever else you prefer to identify it, for instance you can use browser's fingerprint: https://github.com/Rajesh-Royal/Broprint.js as such unique id). So we can generate hostname like "start_${**fingerprint**}-${Date.now()}end.local" and send any request to it using fetch, sendBeacon, iframe.src, image.src, XMLHTTPRequest and so on. 
+
+2. Soon or late request to this special hostname will endup in our UDP server running on port 5353, at that point we can extract **fingerprint** from hostname and send it to the central server along with our local ip address (here I mean Raspberry PI or esp8266 ip address).
+
+3. When central server receives this information it creates a record in some mapping table (could be simple JS object, or some kind of database), saying that **fingerpint**=**ip_address**. For example our **fingerpint** = "OSOoNio3i48j83ijI" and Raspberry PI local ip address = "192.168.1.102", then server will record mappingTable['OSOoNio3i48j83ijI'] = '192.168.1.102';
+
+4. Browser asks central server to give him list of all collected ip addresses for his **fingerprint**. Having this list browser now can establish direct connection to the webserver. 
