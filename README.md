@@ -123,7 +123,7 @@ pc.onicecandidate = function(ice)
 Sends out MDNS request almost instantly without any delay, but unfortunatelly this only works in Chrome :(
 
 5. Since our DIY MDNS server is listening all requests sent to 5353 port, we need to distinguish requests made by browser (identification) from other requests, normally we would use
-some prefix on the hostname (like id_randomstring.local) but given the fact that we're limited with only 57 characters, it might make sense to come up with something more clever (in case if you need it of course), like generating random identifier so the crc8 checksum will always be equals to 127 for instance, or some other "magic" number.
+some prefix on the hostname (like id_randomstring.local) but given the fact that we're limited with only 57 characters, it might make sense to come up with something more clever (in case if you need it of course), like generating random identifier so the crc8 checksum will always be equals to 127 for instance, or some other "magic" number. If you need more, then well :) you can always encode it into the sequence of requests and then aggregate them back on the backend side, keeping in mind that they might come out of order, so you're going to have to come up with some ordering mechanism pretty much similar with the one that concatenates UDP packets.
 
 ## Browser support
 
