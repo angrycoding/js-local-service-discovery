@@ -99,7 +99,7 @@ Check source code to get more understanding.
 ```javascript
 var pc = new RTCPeerConnection({
 	iceServers:[{
-		urls: `stun:${chunk}.local`,
+		urls: `stun:mysuperhost.local`,
 		credential: "a mulatto",
 		username: "an albino"
 	}],
