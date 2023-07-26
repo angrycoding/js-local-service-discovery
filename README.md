@@ -86,6 +86,42 @@ So here is the idea:
 
 Check source code to get more understanding.
 
+## Limitations & observations
+
+1. It seems that despite the rules maximal length of hostname accepted by the browser is 1 segment = 63 characters, which makes it 57 characters (without .local). **Note** that it's not one segment length, it's overall length
+
+2. Allowed characters are ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-, 37 characters, so base37 can be used to encode payload to be url safe
+
+3. There is something broken in Linux at least, mdns host resolution takes about 10 seconds, when you request it from the browser using traditional XMLHTTPRequest, link[rel=dns-prefetch], sendBeacon and so on. As far as I can understand such delay caused by OS that tries to use traditional DNS first and pass it to MDNS only if it fails (yeah yeah, seems to be very obvious that ".local" suffix cannot be the part of the host that can be resolved using normal DNS server). You can check that yourself by resolving MDNS manually from console using "avahi-resolve-host-name foobar1.local"
+
+4. WebRTC on chrome does some optimizations, so this piece of code:
+
+```javascript
+var pc = new RTCPeerConnection({
+	iceServers:[{
+		urls: `stun:${chunk}.local`,
+		credential: "a mulatto",
+		username: "an albino"
+	}],
+});
+
+
+pc.createDataChannel('');
+
+const offer1 = await pc.createOffer();
+pc.setLocalDescription(offer1);
+
+
+
+
+pc.onicecandidate = function(ice)
+{
+	pc.onicecandidate = null;
+};
+```
+
+Sends out MDNS request almost instantly without any delay, but unfortunatelly this only works in Chrome :(
+
 ## Browser support
 
 - Firefox on Linux
