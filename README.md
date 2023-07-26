@@ -90,7 +90,7 @@ Check source code to get more understanding.
 
 1. It seems that despite the rules maximal length of hostname accepted by the browser is 1 segment = 63 characters, which makes it 57 characters (without .local). **Note** that it's not one segment length, it's overall length
 
-2. Allowed characters are ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-, 37 characters, so base37 can be used to encode payload to be url safe
+2. Allowed characters are ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-, 37 characters, so base37 (or just simple random string out of this alphabet) can be used to encode payload to be url safe
 
 3. There is something broken in Linux at least, mdns host resolution takes about 10 seconds, when you request it from the browser using traditional XMLHTTPRequest, link[rel=dns-prefetch], sendBeacon and so on. As far as I can understand such delay caused by OS that tries to use traditional DNS first and pass it to MDNS only if it fails (yeah yeah, seems to be very obvious that ".local" suffix cannot be the part of the host that can be resolved using normal DNS server). You can check that yourself by resolving MDNS manually from console using "avahi-resolve-host-name foobar1.local"
 
@@ -121,6 +121,9 @@ pc.onicecandidate = function(ice)
 ```
 
 Sends out MDNS request almost instantly without any delay, but unfortunatelly this only works in Chrome :(
+
+5. Since our DIY MDNS server is listening all requests sent to 5353 port, we need to distinguish requests made by browser (identification) from other requests, normally we would use
+some prefix on the hostname (like id_randomstring.local) but given the fact that we're limited with only 57 characters, it might make sense to come up with something more clever (in case if you need it of course), like generating random identifier so the crc8 checksum will always be equals to 127 for instance, or some other "magic" number.
 
 ## Browser support
 
