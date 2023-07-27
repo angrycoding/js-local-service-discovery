@@ -84,7 +84,9 @@ So here is the idea:
 
 4. Browser asks central server to give him list of all collected ip addresses for his **fingerprint**. Having this list browser now can establish direct connection to the webserver.
 
+
 ![DIAG](https://github.com/angrycoding/js-local-service-discovery/assets/895042/adf322da-1399-4917-8c27-cc410685b46a)
+
 
 Check source code to get more understanding.
 
