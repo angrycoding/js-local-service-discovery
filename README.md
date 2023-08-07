@@ -146,6 +146,10 @@ So I checked several different web browsers and it works almost everywhere, with
 1. Couldn't get it working under Firefox for windows (I believe that it's some kind of bug there, because it doesn't work with any ".local" suffixed hostnames).
 2. Some of the browsers are too picky about the way you ping this random hostname (that's why I added Date.now() there and that's why I request it using several methods)
 
+## Want more?
+
+Here is an WIP attempt to make modules out of this proposal: https://github.com/angrycoding/mdns-service-discovery
+
 -----
 
 So feel free to use source code in this repo for anything. In case if you have any questions, contact me, also any comments, suggestions, improvements are welcome.
