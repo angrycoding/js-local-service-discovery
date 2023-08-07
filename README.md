@@ -150,6 +150,8 @@ So I checked several different web browsers and it works almost everywhere, with
 
 Here is an WIP attempt to make modules out of this proposal: https://github.com/angrycoding/mdns-service-discovery
 
+https://github.com/angrycoding/mdns-service-discovery/assets/895042/274d20c3-98d3-4390-81dc-a7ffc3383ec1
+
 -----
 
 So feel free to use source code in this repo for anything. In case if you have any questions, contact me, also any comments, suggestions, improvements are welcome.
