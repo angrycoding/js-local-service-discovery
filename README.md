@@ -90,6 +90,16 @@ So here is the idea:
 
 Check source code to get more understanding.
 
+## Accessing local ip addresses in secure environment (custom DNS server)
+
+It's obvious that if you try to load something like http://192.168.0.1:8080 from the page loaded via https you won't get any success, but mixed content error instead. So how to deal with it? You can't obtain certificate for your local ip address, also you can't obtain certificate for *.local domain. Here is the solution:
+1. Let's imagine that you own public domain (let's call it mydomain.com). Obtain certificate (using lets encrypt for instance) for *.mydomain.com
+2. Create DNS record .mydomain.com NS .mydomain.com - now any request to anything.mydomain.com (after trying DNS servers given by your hosting provider) will endup on your own server
+3. Run DNS server on port 53
+4. Answer to request like 192-168-0-1.mydomain.com with A record like A 192.168.0.1
+
+Read more info about this method here: http://my.local-ip.co/ or here: https://github.com/Corollarium/localtls
+
 ## Limitations & observations
 
 1. It seems that despite the rules maximal length of hostname accepted by the browser is 1 segment = 63 characters, which makes it 57 characters (without .local). **Note** that it's not one segment length, it's overall length
